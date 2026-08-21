@@ -1,0 +1,106 @@
+**Frog Jump Problem (1-step or 2-step)**
+
+def frog_jump(n, heights):
+    dp = [0] * n
+    dp[0] = 0
+    dp[1] = abs(heights[1] - heights[0])
+    for i in range(2, n):
+        dp[i] = min(dp[i-1] + abs(heights[i] - heights[i-1]),
+                    dp[i-2] + abs(heights[i] - heights[i-2]))
+    return dp[n-1]
+
+n = int(input())
+heights = list(map(int, input().split()))
+print(frog_jump(n, heights))
+
+
+  
+**Frog Jump with K Distances**
+
+def frog_jump_k(n, k, heights):
+    dp = [0] * n
+    for i in range(1, n):
+        dp[i] = min(dp[j] + abs(heights[i] - heights[j]) for j in range(max(0, i-k), i))
+    return dp[n-1]
+
+n, k = map(int, input().split())
+heights = list(map(int, input().split()))
+print(frog_jump_k(n, k, heights))
+
+
+
+**SQL JOINS PRACTICE QUERIES **
+
+**1. INNER JOIN employees with departments**
+SELECT e.emp_id, e.emp_name, d.dept_name, d.location
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id;
+
+
+**2. LEFT JOIN employees with departments**
+SELECT e.emp_id, e.emp_name, d.dept_name
+FROM employees e
+LEFT JOIN departments d ON e.dept_id = d.dept_id;
+
+
+**3. Departments without employees**
+SELECT d.dept_id, d.dept_name
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id
+WHERE e.emp_id IS NULL;
+
+
+**4. Employee, project, department, hours**
+SELECT e.emp_name, p.project_name, d.dept_name, ep.hours
+FROM employees e
+JOIN employee_project ep ON e.emp_id = ep.emp_id
+JOIN projects p ON ep.project_id = p.project_id
+JOIN departments d ON p.dept_id = d.dept_id;
+
+**5. Projects with employees (include empty)**
+SELECT p.project_id, p.project_name, e.emp_name
+FROM projects p
+LEFT JOIN employee_project ep ON p.project_id = ep.project_id
+LEFT JOIN employees e ON ep.emp_id = e.emp_id;
+
+**6. Employee and manager names**
+SELECT e.emp_name AS employee, m.emp_name AS manager
+FROM employees e
+LEFT JOIN employees m ON e.manager_id = m.emp_id;
+
+**7. Employees with >1 project**
+SELECT e.emp_id, e.emp_name, COUNT(ep.project_id) AS project_count
+FROM employees e
+JOIN employee_project ep ON e.emp_id = ep.emp_id
+GROUP BY e.emp_id, e.emp_name
+HAVING COUNT(ep.project_id) > 1;
+
+
+**8. Department employee count and avg salary**
+SELECT d.dept_name, COUNT(e.emp_id) AS num_employees, COALESCE(AVG(e.salary),0) AS avg_salary
+FROM departments d
+LEFT JOIN employees e ON d.dept_id = e.dept_id
+GROUP BY d.dept_name;
+
+**9. Employees on projects outside their department**
+SELECT e.emp_name, d1.dept_name AS emp_dept, p.project_name, d2.dept_name AS proj_dept
+FROM employees e
+JOIN departments d1 ON e.dept_id = d1.dept_id
+JOIN employee_project ep ON e.emp_id = ep.emp_id
+JOIN projects p ON ep.project_id = p.project_id
+JOIN departments d2 ON p.dept_id = d2.dept_id
+WHERE d1.dept_id <> d2.dept_id;
+
+**10. Projects with no employees**
+SELECT p.project_id, p.project_name, d.dept_name, p.budget
+FROM projects p
+JOIN departments d ON p.dept_id = d.dept_id
+LEFT JOIN employee_project ep ON p.project_id = ep.project_id
+WHERE ep.emp_id IS NULL;
+
+
+
+
+
+
+
